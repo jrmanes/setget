@@ -1,4 +1,4 @@
-FROM golang:1.20.4-bullseye as builder
+FROM golang:1.21.3-bullseye as builder
 LABEL maintainer="Jose Ramon Mañes - github.com/jrmanes"
 ENV GOPATH /go
 ENV GOBIN /go/bin

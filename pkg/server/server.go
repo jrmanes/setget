@@ -14,10 +14,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type Response struct {
-	Message string `json:"message"`
-}
-
 func Setup() {
 	// db connection
 	err := mysql.SetupDB()
