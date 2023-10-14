@@ -6,7 +6,6 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,12 +19,6 @@ var (
 )
 
 func Config() {
-	// load env vars
-	err := godotenv.Load()
-	if err != nil {
-		log.Error("Error loading .env file")
-	}
-
 	user = os.Getenv("MYSQL_USER")
 	if user == "" {
 		user = ""
