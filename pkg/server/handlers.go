@@ -4,26 +4,44 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/jrmanes/seget/internal/models"
+	"github.com/jrmanes/seget/pkg/db/mysql"
+
 	log "github.com/sirupsen/logrus"
 )
 
 type Respose struct {
-	Size   int `json:"size"`
-	Errors int `json:"errors"`
+	Item   interface{} `json:"item"` // return any kind of response
+	Errors string      `json:"errors"`
 }
 
 func GetItemHandler(w http.ResponseWriter, r *http.Request) {
-	// get the user by param
-	user_id := mux.Vars(r)["user"]
-	if user_id == "" {
-		log.Error("User param is empty", http.StatusUnauthorized)
-		return
+
+	item := models.Item{}
+
+	item, err := mysql.GetItem()
+	if err != nil {
+		log.Error("Error marshaling to JSON:", err)
+		resp := Respose{
+			Errors: string(err.Error()),
+			Item:   item,
+		}
+
+		jsonData, err := json.Marshal(resp)
+		if err != nil {
+			log.Error("Error marshaling to JSON:", err)
+			return
+		}
+
+		//w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonData)
 	}
 
 	// Generate the response, adding the size of the array
 	resp := Respose{
-		Errors: 0,
+		Errors: "",
+		Item:   item,
 	}
 
 	jsonData, err := json.Marshal(resp)
@@ -32,27 +50,39 @@ func GetItemHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//w.WriteHeader(http.StatusOK)
+	log.Info(r.Host, " ", r.URL, " ", r.Method, " ", resp)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }
 
 func AddItemHandler(w http.ResponseWriter, r *http.Request) {
-	// err = json.NewDecoder(r.Body).Decode(&location)
-	// if err != nil {
-	// 	log.Error("There was an error decoding the request body into the struct")
-	// }
+	item := models.Item{}
 
-	// uuid := uuid.New().String()
-	// location.Id = uuid
+	err := json.NewDecoder(r.Body).Decode(&item)
+	if err != nil {
+		log.Error("There was an error decoding the request body into the struct")
+	}
 
-	jsonData, err := json.Marshal(location)
+	err = mysql.AddItem(item)
+	if err != nil {
+		log.Error("There was an error decoding the request body into the struct")
+	}
+
+	// Generate the response, adding the size of the array
+	resp := Respose{
+		Errors: "",
+		Item:   item,
+	}
+
+	jsonData, err := json.Marshal(item)
 	if err != nil {
 		log.Error("Error marshaling to JSON:", err)
 		return
 	}
 
-	//w.WriteHeader(http.StatusOK)
+	log.Info(r.Host, " ", r.URL, " ", r.Method, " ", resp)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }

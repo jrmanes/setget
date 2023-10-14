@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/jrmanes/setget/pkg/server"
+	"github.com/jrmanes/seget/pkg/server"
 )
 
 func main() {

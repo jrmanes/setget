@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: "root"
       MYSQL_ROOT_PASSWORD: "root"
     networks:
-      - "bridge"
+      - setget
 
   setget-api:
     env_file:

@@ -8,14 +8,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
-	log "github.com/sirupsen/logrus"
-)
+	"github.com/jrmanes/seget/pkg/db/mysql"
 
-var (
-	// port to the http server
-	httpPort string
+	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 )
 
 type Response struct {
@@ -23,9 +19,10 @@ type Response struct {
 }
 
 func Setup() {
-	err := godotenv.Load()
+	// db connection
+	err := mysql.SetupDB()
 	if err != nil {
-		log.Error("Error loading .env file")
+		log.Error("Error connecting to the db: ", err)
 	}
 }
 
