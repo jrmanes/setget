@@ -28,11 +28,11 @@ func Config() {
 
 	user = os.Getenv("MYSQL_USER")
 	if user == "" {
-		user = "root"
+		user = ""
 	}
-	pass = os.Getenv("MYSQL_PASS")
+	pass = os.Getenv("MYSQL_USER")
 	if pass == "" {
-		pass = "root"
+		pass = ""
 	}
 	host = os.Getenv("MYSQL_HOST")
 	if host == "" {
@@ -44,11 +44,11 @@ func Config() {
 	}
 	dbName = os.Getenv("MYSQL_DATABASE")
 	if dbName == "" {
-		dbName = "root"
+		dbName = ""
 	}
 	table = os.Getenv("MYSQL_TABLE")
 	if table == "" {
-		table = "root"
+		table = ""
 	}
 }
 
@@ -82,8 +82,8 @@ func Conn() (*sql.DB, error) {
 func SetupDB() error {
 	Config()
 
-	connString := user + ":" + pass + "@tcp(" + host + ":" + port + ")/root"
-	log.Info(connString)
+	connString := user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + dbName
+	log.Info("connection strin: ", connString)
 
 	db, err := sql.Open("mysql", connString)
 	if err != nil {
@@ -92,6 +92,13 @@ func SetupDB() error {
 	}
 
 	defer db.Close()
+
+	// Open doesn't open a connection. Validate DSN data:
+	err = db.Ping()
+	if err != nil {
+		log.Error("ERRROR: ", err)
+		panic(err)
+	}
 
 	q := "CREATE DATABASE IF NOT EXISTS " + dbName
 	log.Info("q: ", q)

@@ -2,6 +2,8 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/jrmanes/seget/internal/models"
@@ -22,20 +24,7 @@ func GetItemHandler(w http.ResponseWriter, r *http.Request) {
 	item, err := mysql.GetItem()
 	if err != nil {
 		log.Error("Error marshaling to JSON:", err)
-		resp := Respose{
-			Errors: string(err.Error()),
-			Item:   item,
-		}
-
-		jsonData, err := json.Marshal(resp)
-		if err != nil {
-			log.Error("Error marshaling to JSON:", err)
-			return
-		}
-
-		//w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonData)
+		ResponseHttp(w, r, item, err)
 	}
 
 	// Generate the response, adding the size of the array
@@ -44,16 +33,9 @@ func GetItemHandler(w http.ResponseWriter, r *http.Request) {
 		Item:   item,
 	}
 
-	jsonData, err := json.Marshal(resp)
-	if err != nil {
-		log.Error("Error marshaling to JSON:", err)
-		return
-	}
-
 	log.Info(r.Host, " ", r.URL, " ", r.Method, " ", resp)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonData)
+	ResponseHttp(w, r, item, err)
 }
 
 func AddItemHandler(w http.ResponseWriter, r *http.Request) {
@@ -64,15 +46,32 @@ func AddItemHandler(w http.ResponseWriter, r *http.Request) {
 		log.Error("There was an error decoding the request body into the struct")
 	}
 
+	if item.Item == "" {
+		ResponseHttp(w, r, item, errors.New("ERROR: item is emtpy"))
+		log.Error("ERROR: item is emtpy")
+	}
+
 	err = mysql.AddItem(item)
 	if err != nil {
 		log.Error("There was an error decoding the request body into the struct")
 	}
 
 	// Generate the response, adding the size of the array
-	resp := Respose{
-		Errors: "",
-		Item:   item,
+	ResponseHttp(w, r, item, err)
+}
+
+func ResponseHttp(w http.ResponseWriter, r *http.Request, item models.Item, err error) {
+	resp := Respose{}
+	if err != nil {
+		resp = Respose{
+			Errors: fmt.Sprintf("ERROR: %d", err),
+			Item:   item,
+		}
+	} else {
+		resp = Respose{
+			Errors: "",
+			Item:   item,
+		}
 	}
 
 	jsonData, err := json.Marshal(item)

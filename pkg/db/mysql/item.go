@@ -23,6 +23,10 @@ func GetItem() (models.Item, error) {
 		log.Error("ERROR:", err)
 		return models.Item{}, err
 	}
+	if count == 0 {
+		log.Error("ERROR DB is empty, add some values first: ", err)
+		return models.Item{}, err
+	}
 
 	// generate a random num between 1 and the limit
 	rand.Seed(time.Now().UnixNano())
