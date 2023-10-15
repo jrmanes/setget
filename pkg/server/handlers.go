@@ -18,29 +18,6 @@ type Response struct {
 	Errors string      `json:"errors"`
 }
 
-// GetItemHandler handles HTTP GET requests for retrieving an item.
-func GetItemHandler(w http.ResponseWriter, r *http.Request) {
-	item := models.Item{}
-
-	// Call the `mysql.GetItem` function to retrieve an item.
-	item, err := mysql.GetItem()
-	if err != nil {
-		log.Error("Error marshaling to JSON:", err)
-		ResponseHttp(w, r, item, err)
-	}
-
-	// Generate the response
-	resp := Response{
-		Errors: "",
-		Item:   item,
-	}
-
-	// Log information about the request.
-	log.Info(r.Host, " ", r.URL, " ", r.Method, " ", resp)
-
-	ResponseHttp(w, r, item, err)
-}
-
 // AddItemHandler handles HTTP POST requests for adding an item.
 func AddItemHandler(w http.ResponseWriter, r *http.Request) {
 	item := models.Item{}
@@ -64,6 +41,20 @@ func AddItemHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate the response, adding the size of the array.
+	ResponseHttp(w, r, item, err)
+}
+
+// GetItemHandler handles HTTP GET requests for retrieving an item.
+func GetItemHandler(w http.ResponseWriter, r *http.Request) {
+	item := models.Item{}
+
+	// Call the `mysql.GetItem` function to retrieve an item.
+	item, err := mysql.GetItem()
+	if err != nil {
+		log.Error("Error marshaling to JSON:", err)
+		ResponseHttp(w, r, item, err)
+	}
+
 	ResponseHttp(w, r, item, err)
 }
 

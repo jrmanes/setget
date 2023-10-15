@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Setup configure the service
 func Setup() {
 	// db connection
 	err := mysql.SetupDB()
@@ -22,6 +23,7 @@ func Setup() {
 	}
 }
 
+// StartServerHttp initialise the http server here
 func StartServerHttp() {
 	httpPort := os.Getenv("HTTP_PORT")
 	if httpPort == "" {
