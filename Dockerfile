@@ -28,7 +28,7 @@ RUN apk update \
 # Copy the Pre-built binary file from the previous stage
 COPY --chown=${USR_NAME}:${USR_NAME} --from=builder /app/main .
 
-USER ${USR_HOME}
+USER ${USR_NAME}
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
