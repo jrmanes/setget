@@ -2,23 +2,6 @@
 
 ---
 
-## Description
-
-The resources in this repo deploys a service to Kubernetes using Helm.
-
-There are two componentes:
-- MYSQL: We are going to use this service as database.
-- SETGET: An API service that has two endpoints:
-  - `/get`: Returns one of the previously persisted string values (choose a random one).
-  - `/set`: Accepts a body value and persists it, the body looks like:
-    - ```json
-      {
-        "item": "value to insert"
-      }
-      ```
-      
----
-
 ## How to install it
 
 Run the command:
@@ -61,7 +44,11 @@ done
 If you want to build the container and push it to your own registry, you have to update the vlaue in the `Makefile`, the variable:
 ```
 REGISTRY_NAME=<your-registry>
+# then run the following command, it will build the container and push it to your registry
+make docker_all
 ```
+
+*Remember to update image reference in the Helm values in `infra/setget/values.yaml`*
 
 ---
 
