@@ -1,8 +1,4 @@
-# Installation
-
----
-
-## Description
+# Description
 
 The resources in this repo deploys a service to Kubernetes using Helm.
 
@@ -17,9 +13,7 @@ There are two componentes:
       }
       ```
       
----
-
-
+Go to [INSTALLATION.md](./INSTALLATION.md) to install the service in your cluster. 
 
 ---
 
