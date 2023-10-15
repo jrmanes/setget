@@ -76,7 +76,6 @@ func SetupDB() error {
 	Config()
 
 	connString := user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + dbName
-	log.Info("connection strin: ", connString)
 
 	db, err := sql.Open("mysql", connString)
 	if err != nil {
